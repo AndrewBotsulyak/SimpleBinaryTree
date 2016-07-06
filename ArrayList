@@ -1,0 +1,133 @@
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace ConsoleApplication172
+{
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            MyArrayList<Str> m = new MyArrayList<Str>();
+            m.Add(new Str());
+            m.Add(new Str());
+            m.Add(new Str());
+            m.Add(new Str());
+            m.Add(new Str());
+            m.Add(new Str());
+            
+            m.Remove(1);
+            foreach(Str s in m)        
+            {
+                Console.WriteLine(s);
+            }
+            
+        }
+    }
+
+    class IEnum<T>               //Enumerator
+    {
+        private T[] mas;
+        private int step = -1;
+        private int size;
+
+        public IEnum(T[] arr)
+        {
+            size = arr.Length;
+            mas = arr;
+        }
+        public bool MoveNext()
+        {
+            step++;
+            if(step >= size)
+                return false;
+            return true;
+        }
+        public T Current
+        {
+            get { return mas[step]; }
+        }
+
+    }
+
+    class MyArrayList<T>                 // with GetEnumerator.
+    {
+        private T[] arr;
+        private int size;
+        private int count;
+
+        public MyArrayList() : this(1) { }
+        public MyArrayList(int siz)
+        {
+            arr = new T[siz];
+            size = siz;
+            count = -1;
+        }
+
+        public void Add(T ob)
+        {
+            count++;
+            if (count == 0)
+            {
+                arr[0] = ob;
+            }
+            else
+            {
+                if (count > size - 1)
+                {
+                    int s = size;
+                    size++;
+                    T[] temp = arr;
+                    arr = new T[size];
+                    for (int i = 0; i < s; i++)
+                        arr[i] = temp[i];
+                    arr[count] = ob;
+                }
+            }
+        }
+
+        public void Remove(int index)
+        {
+            if(index < 0 || index > count)
+                throw new Exception("Wrong index for Remove");
+            else
+            {
+                for(int i = index ; i < size; i++)
+                {
+                    if(i + 1 < size)
+                        arr[i] = arr[i + 1];
+                }
+                size--;
+                count--;
+                T[] temp = arr;
+                arr = new T[size];
+                Array.Copy(temp, arr, size);
+            }
+        }
+        public void Print()
+        {
+            foreach (T temp in arr)
+            {
+                Console.WriteLine(temp);
+            }
+        }
+
+        public IEnum<T> GetEnumerator()                // 
+        {
+            return new IEnum<T>(arr);
+        }
+
+    }
+
+    class Str                                     // My class who works with MyArrayList<T> 
+    {
+        public override string ToString()
+        {
+            return "Andrew";
+        }
+    }
+
+}
