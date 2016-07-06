@@ -1,0 +1,227 @@
+# SimpleBinaryTree
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace BinaryTree
+{
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            BinaryTree<int> a = new BinaryTree<int>();
+            a.Insert(65);
+            a.Insert(7);
+            a.Insert(12);
+            a.Insert(15);
+            a.Insert(2);
+            a.Insert(42);
+            a.Insert(32);
+            a.Insert(75);
+            a.Insert(21);
+            a.Insert(44);
+            a.Insert(62);
+            a.Insert(125);
+            a.Insert(9);
+            a.Insert(25);
+
+            a.Delete(65);
+            a.Delete(62);
+            a.Delete(32);
+            a.Print();
+        }
+    }
+
+
+
+    class BinaryTree<T> where T : IComparable<T>    
+    {
+        private Node<T> root;
+        private int size;
+        class Node<T>                         // class Node
+        {
+            public T value;
+            public Node<T> left;
+            public Node<T> right;
+            public Node(T val)
+            {
+                value = val;
+            }
+        }
+
+
+        public void Insert(T val)                                // Add <T>
+        {
+            if (val == null) throw new ArgumentNullException();
+            size++;
+            Node<T> temp = new Node<T>(val);
+            if (root == null)
+                root = temp;
+            else
+            {
+                Node<T> curr = root, parent = null;
+                while (curr != null)
+                {
+                    parent = curr;
+                    if (val.CompareTo(curr.value) < 0)
+                        curr = curr.left;
+                    else
+                        curr = curr.right;
+                }
+
+                if (val.CompareTo(parent.value) < 0) parent.left = temp;
+                else
+                    parent.right = temp;
+            }
+        }
+
+
+        public void Delete(T val)                                 // Del<T>
+        {
+            if (val == null) throw new ArgumentNullException();
+            Node<T> current = root, parent = null, temp = null;
+            while(current != null)
+            {
+                parent = temp;
+                temp = current;
+                if (val.CompareTo(current.value) == 0)
+                {
+                    break;
+                }
+                if (val.CompareTo(current.value) < 0)
+                    current = current.left;
+                if (val.CompareTo(current.value) > 0)
+                    current = current.right;
+                
+            }
+            if(val.CompareTo(root.value) == 0)
+            {
+                Node<T> current2 = temp, temp2 = null,par2 = null;
+                if (current2.left != null && current2.right != null || current2.right == null)
+                {
+                    current2 = current2.left.right;
+                    while(current2 != null)
+                    {
+                        par2 = temp2;
+                        temp2 = current2;
+                        current2 = current2.right;
+                    }
+                    if (temp2.left == null)
+                        par2.right = null;
+                    else
+                        par2.right = temp2.left;
+                    temp2.right = root.right;
+                    temp2.left = root.left;
+                    root = temp2;
+                    return;
+                }
+                if(current2.left == null && current2.right == null)
+                {
+                    root = null;
+                    return;
+                }
+                if(current2.left == null && current2.right != null)
+                {
+                    current2 = current2.right.left;
+                    while(current2 != null)
+                    {
+                        par2 = temp2;
+                        temp2 = current2;
+                        current2 = current2.left;
+                    }
+                    if (temp2.right == null)
+                            par2.left = null;
+                    else
+                            par2.left = temp2.right;
+                    temp2.right = root.right;
+                    temp2.left = root.left;
+                    root = temp2;
+                    return;
+                }
+                
+            }
+
+
+            if(temp.right == null && temp.left == null)
+            {
+                if (val.CompareTo(parent.value) < 0)
+                    parent.left = null;
+                else
+                    parent.right = null;
+                return;
+            }
+            if(temp.right == null)
+            {
+                if (val.CompareTo(parent.value) < 0)
+                    parent.left = temp.left;
+                else
+                    parent.right = temp.left;
+                return;
+            }
+            if (temp.left == null)
+            {
+                if (val.CompareTo(parent.value) < 0)
+                    parent.left = temp.right;
+                else
+                    parent.right = temp.right;
+                return;
+            }
+            else
+            {
+                Node<T> current2 = temp, temp2 = null,par2 = null;
+                if (current2.right.left != null)
+                    current2 = current2.right.left;
+                else
+                {
+                    current2.right.left = current2.left;
+                    if (current2.right.value.CompareTo(parent.value) < 0)
+                        parent.left = current2.right;
+                    else
+                        parent.right = current2.right;
+                    return;
+                }
+                while(current2 != null)
+                {
+                    par2 = temp2;
+                    temp2 = current2;
+                    current2 = current2.left;
+                }
+                if (temp2.value.CompareTo(parent.value) < 0)
+                {
+                    parent.left = temp2;
+                    if (temp2.right != null)
+                        par2.left = temp2.right;
+                    temp2.right = temp.right;
+                    temp2.left = temp.left;
+                }
+                else
+                {
+                    parent.right = temp2;
+                    if (temp2.right != null)
+                        par2.left = temp2.right;
+                    temp2.right = temp.right;
+                    temp2.left = temp.left;
+                    return;
+                }
+            }
+
+           
+        }
+
+        private void TryPrint(Node<T> r)
+        {
+            if(r == null)
+                return;
+            TryPrint(r.left);
+            Console.WriteLine(r.value);
+            TryPrint(r.right);
+        }
+
+        public void Print()                                    // Print Tree
+        {
+            TryPrint(root);
+        }
+    }
+}
